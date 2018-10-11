@@ -13,7 +13,10 @@ father(PARENT, CHILD) :- parent(PARENT, CHILD), male(PARENT).
 sibling(X, Y) :- parent(Z, X), parent(Z, Y), X\= Y.
 
 % Grossmutter = G, Erzeuger = E, Kind = K
-grandmother(G, K) :- parent(E , K), parent(G, E), female(G).
+grandmother(G, K) :-
+    parent(E , K),
+    parent(G, E),
+    female(G).
 
 % Is X an offspring of Y?
 offspring(CHILD, PARENT) :- parent(PARENT, CHILD).
