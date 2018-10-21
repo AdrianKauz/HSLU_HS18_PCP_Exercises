@@ -7,8 +7,8 @@ fib_clp(N, F) :-
       N1 = N-1,
       N2 = N-2,
       N1 >= N2,
-      N1 =< F1+1,
-      N2 =< F2+1},
+      N1 =< F1+1,  % Zusatz zu Aufgabe c
+      N2 =< F2+1}, % Zusatz zu Aufgabe c
     fib_clp(N1, F1),
     fib_clp(N2, F2).
 
@@ -36,11 +36,10 @@ fib_clp(N, F) :-
 %    Falls ja: Modifizieren Sie das Prädikat entsprechend und testen sie
 %    das neue Prädikat.
 %    Falls Nein: Begründen Sie Ihre Antwort.
-%    - Ja. Wenn man sich mal eine Tabelle erstellt in Bezug N zu F,
-%      fällt auf, dass N immer <= F ist. Diese Regel eingesetzt und es
-%      klappt.
-
-
+%    - Ja. Wenn man sich mal eine Fibonacci-Tabelle erstellt in Bezug N
+%    zu F, kann man ab N = 5 daraus schliessen, dass F >= N ist. Damit
+%    auch noch der Teil ab N=2 abgedeckt ist, reicht es noch einen
+%    Offset von +1 dazu zu rechnen. Ugly, aber es funktioniert.
 
 
 
