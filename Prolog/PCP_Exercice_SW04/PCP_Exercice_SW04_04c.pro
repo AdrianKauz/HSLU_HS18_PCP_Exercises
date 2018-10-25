@@ -79,7 +79,6 @@ blocks([A, B, C|Bs1], [D, E, F|Bs2], [G, H, I|Bs3]) :-
 =============
 */
 :- use_module(library(http/json_convert)).
-:- use_module(library(http/http_json)).
 :- use_module(library(http/http_client)).
 
 % Aus Ilias. Sollte selbsterklärend sein. Objekt-Definitionen.
