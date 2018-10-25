@@ -1,5 +1,4 @@
 :- use_module(library(clpfd)).
-:- use_module(library(http/json)).
 :- use_module(library(http/http_client)).
 :- use_module(library(http/json_convert)).
 
@@ -89,10 +88,10 @@ blocks([A, B, C|Bs1], [D, E, F|Bs2], [G, H, I|Bs3]) :-
 
 /*
 =============
- HTTP & JSON
+ HTTP & JSON (With a little help)
 =============
 */
-% Aus Ilias. Sollte selbsterklärend sein
+% Aus Ilias. Sollte selbsterklärend sein. Objekt-Definitionen.
 :- json_object
         relationship(problemKey:integer, relationship:atom, firstPerson:atom, secondPerson:atom),
 	sudoku(problemKey:integer, sudoku:list),
@@ -108,19 +107,21 @@ solve(relationship, Id) :-
 solve(sudoku, Id) :-
 	atom_concat('http://localhost:16316/problem/sudoku/', Id, Url),
 	http_get(Url, Json, []),
-	json_to_prolog(Json, sudoku(Problemkey, Sudoku_0)),
-	maplist(replace_0, Sudoku_0, Sudoku),
+	json_to_prolog(Json, sudoku(Problemkey, NewSudoku)),
+	maplist(replace_zeroes, NewSudoku, Sudoku),
 	Sudoku = [A, B, C, D, E, F, G, H, I],
 	sudoku([A, B, C, D, E, F, G, H, I]),
 	prolog_to_json(sudoku_solution(Problemkey, Sudoku), Json_Post),
 	http_post('http://localhost:16316/problem/sudoku', json(Json_Post), _,[]).
 
+% Falls die Antwort falsch ist
 call_relationship(Problemkey, Relationship, FirstPerson, SecondPerson) :-
 	\+ call(Relationship, FirstPerson, SecondPerson),
 	prolog_to_json(relationship_solution(false, Problemkey), Json),
 	http_post('http://localhost:16316/problem/relationship/', json(Json), _,[]),
 	!.
 
+% Falls die Antwort richtig ist
 call_relationship(Problemkey, Relationship, FirstPerson, SecondPerson) :-
 	call(Relationship, FirstPerson, SecondPerson),
 	prolog_to_json(solution(true, Problemkey), Json),
@@ -128,8 +129,8 @@ call_relationship(Problemkey, Relationship, FirstPerson, SecondPerson) :-
 	http_post('http://localhost:16316/problem/relationship/', json(Json), _, []),
 	!.
 
-replace_0(L1, L2) :-
-	maplist(replace_help, L1, L2),
+replace_zeroes(L1, L2) :-
+	maplist(replace_rule, L1, L2),
 	!.
-replace_help(0, _).
-replace_help(X, X).
+replace_rule(0, _). % Replace "0" with "_"
+replace_rule(X, X). % Otherwise keep value
