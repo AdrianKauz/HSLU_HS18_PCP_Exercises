@@ -4,7 +4,8 @@
 % set_difference([a, b, c, d], [b, d, e, f], [a, c]). --> true
 
 % Wenn N bei beiden Listen identisch ist, dann darf N kein Element von
-% Set2 sein. Falls doch, dann "false"
+% Set2 sein. Falls doch, dann "false".
+% Wichtig: Listen müssen geordnet sein!
 set_difference([N | Set1], Set2, [N | SetDifference]) :-
     \+ member(N, Set2),
     set_difference(Set1, Set2, SetDifference).
