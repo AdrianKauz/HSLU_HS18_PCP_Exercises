@@ -48,10 +48,9 @@ blocks([A, B, C|Bs1], [D, E, F|Bs2], [G, H, I|Bs3]) :-
     all_distinct([A, B, C, D, E, F, G, H, I]),
     blocks(Bs1, Bs2, Bs3).
 
-
-:- use_module(library(http/json_convert)).
-:- use_module(library(http/http_json)).
 :- use_module(library(http/http_client)).
+:- use_module(library(http/json)).
+:- use_module(library(http/json_convert)).
 
 % Aus Ilias. Sollte selbsterklärend sein. Objekt-Definitionen
 :- json_object relationship(problemKey:integer, relationship:atom, firstPerson:atom, secondPerson:atom).
@@ -68,23 +67,23 @@ solve(relationship, Id) :-
 solve(sudoku, Id) :-
 	atom_concat('http://localhost:16316/problem/sudoku/', Id, Url),
 	http_get(Url, Json, []),
-	json_to_prolog(Json, sudoku(Problemkey, NewSudoku)),
+	json_to_prolog(Json, sudoku(ProblemKey, NewSudoku)),
 	maplist(replace_zeroes, NewSudoku, CurrSudoku), % List brauchts 2x um an die einzelnen Elemente ranzukommen
 	CurrSudoku = [A, B, C, D, E, F, G, H, I],
 	sudoku([A, B, C, D, E, F, G, H, I]),
-	prolog_to_json(sudoku_solution(Problemkey, CurrSudoku), Json_Post),
+	prolog_to_json(sudoku_solution(ProblemKey, CurrSudoku), Json_Post),
 	% http_post(Url, Data, Reply, Options)
 	http_post('http://localhost:16316/problem/sudoku', json(Json_Post), _,[]).
 
-call_relationship(Problemkey, Relationship, FirstPerson, SecondPerson) :-
+call_relationship(ProblemKey, Relationship, FirstPerson, SecondPerson) :-
 	\+ call(Relationship, FirstPerson, SecondPerson),
-	prolog_to_json(solution(false, Problemkey), Json),
+	prolog_to_json(solution(false, ProblemKey), Json),
 	http_post('http://localhost:16316/problem/relationship/', json(Json), _,[]),
 	!.
 
-call_relationship(Problemkey, Relationship, FirstPerson, SecondPerson) :-
+call_relationship(ProblemKey, Relationship, FirstPerson, SecondPerson) :-
 	call(Relationship, FirstPerson, SecondPerson),
-	prolog_to_json(solution(true, Problemkey), Json),
+	prolog_to_json(solution(true, ProblemKey), Json),
 	http_post('http://localhost:16316/problem/relationship/', json(Json), _, []),
 	!.
 

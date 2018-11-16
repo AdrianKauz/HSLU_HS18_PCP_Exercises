@@ -68,7 +68,7 @@
 
 ; b) Erklären Sie, warum sich die beiden Ausdrücke unterscheiden.
 ;    Erstes Lambda : x(1) zu y, y(5) zu x, danach Auswertung
-;    Zweites Lambda: x(1) zu b, y(5) zu a, danach Auswetung von x y. 
+;    Zweites Lambda: x(1) zu b, y(5) zu a, danach Auswetung von x y. lexikografisches Scoping
 ; =============================================================================
 
 
@@ -78,7 +78,8 @@
 (define a-list (list (list 1 2 3) (list 1 2) (list 1 2 3 4)))
 ; und möchte jede Liste mit 0 beginnen lassen. Wie kann man dies erreichen, ohne, dass extra eine
 ; Funktion (mit Namen) geschrieben werden muss?
-; Bö???
+ (map (lambda (inner-list) (cons 0 inner-list)) a-list)
+; map fürt function für jedes a-list-Element aus. Mit cons wird 0 der übergebenen Liste übergeben
 ; =============================================================================
 
 
@@ -89,14 +90,14 @@
 
 (define (calc-a-list functionlist a b)
   (if (empty? functionlist)
-      (
+      (begin(
         (write 'finished)
-        (newline)
+        (newline))
       )
-      (
+      ( begin(
         (write ((first functionlist) a b))
         (newline)
-        (calc-a-list (rest functionlist) a b)
+        (calc-a-list (rest functionlist) a b))
       )
   )
 )
